@@ -32,6 +32,7 @@ import com.google.gson.Gson;
 import com.lyk.busgrade.tools.NetUtil;
 import com.lyk.busgrade.tools.RegularUtil;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -172,7 +173,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        request = new StringRequest(Request.Method.GET, "http://218.242.144.40/weixinpage/HandlerBus.ashx?action=Two&name=1096%E8%B7%AF&lineid=001096", new Response.Listener<String>() {
+        request = new StringRequest(Request.Method.GET, "http://218.242.144.40/weixinpage/HandlerBus.ashx?action=Two&name="+lineName+"%E8%B7%AF&lineid="+String.format("%06d",Integer.parseInt(lineName)), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Gson gson = new Gson();
