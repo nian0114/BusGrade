@@ -1,88 +1,115 @@
 package com.lyk.busgrade;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
-
-import com.google.gson.Gson;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by Nian on 17/6/18.
  */
 
 public class ResultActivity extends AppCompatActivity {
+    @Bind(R.id.main_recyclerview)
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_result);
 
+        Intent intent=getIntent();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.user_login);
+        actionBar.setTitle(intent.getStringExtra("linenumber"));
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                HttpGet get = new HttpGet("http://218.242.144.40/weixinpage/HandlerBus.ashx?action=Two&name=1096%E8%B7%AF&lineid=001096");
-                HttpClient httpClient = new DefaultHttpClient();
-                try {
-                    HttpResponse httpResponse = httpClient.execute(get);
-                    JSONObject jsonObject;
+        ButterKnife.bind(this);
 
-                    String s = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
-                    s = s.replace("\n", "\\n");
-                    try {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);//提高性能
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(new Adapter(this));
+    }
 
-                        Gson gson = new Gson();
-                        BusBean busBean = gson.fromJson(s, BusBean.class);
 
-                        for(int i=0;i<busBean.getlineResults1().getStops().size();i++){
-                            Log.d("TAG",busBean.getlineResults1().getStops().get(i).getZdmc());
-                        }
+    public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
+        private LayoutInflater mInflater;
 
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        public Adapter(Context context) {
+            mInflater = LayoutInflater.from(context);
+        }
 
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            public ViewHolder(View view) {
+                super(view);
+                ButterKnife.bind(this, view);
             }
-        }).start();
 
+            @Bind(R.id.main_item_tv)
+            TextView textView;
+        }
+
+        @Override
+        public int getItemCount() {
+            return MainActivity.busBean.getlineResults0().getStops().size();
+        }
+
+        /**
+         * 创建ViewHolder
+         */
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+            View view = mInflater.inflate(R.layout.recycler_item, viewGroup, false);
+            ViewHolder viewHolder = new ViewHolder(view);
+            return viewHolder;
+        }
+
+        /**
+         * 设置值
+         */
+        @Override
+        public void onBindViewHolder(final ViewHolder holder, final int i) {
+            holder.textView.setText(MainActivity.busBean.getlineResults0().getStops().get(i).getZdmc());
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.login, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId()==android.R.id.home) {
-            finish();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        return true;
     }
+
+
 }

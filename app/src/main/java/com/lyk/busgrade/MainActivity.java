@@ -22,6 +22,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 import com.lyk.busgrade.tools.NetUtil;
 import com.lyk.busgrade.tools.RegularUtil;
 
@@ -37,6 +44,11 @@ public class MainActivity extends AppCompatActivity
     private EditText mBusInfo;
     private Button mBusSearch;
     private ImageView mImageView;
+
+    private RequestQueue requestQueue;
+    private StringRequest request;
+
+    public static BusBean busBean;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +75,8 @@ public class MainActivity extends AppCompatActivity
         mImageView.setOnClickListener(this);
 
         ButterKnife.bind(this);
+
+        requestQueue = Volley.newRequestQueue(this);
     }
 
     @Override
@@ -152,25 +166,33 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        String lineName = mBusInfo.getText().toString();
+        final String lineName = mBusInfo.getText().toString();
         if (TextUtils.isEmpty(lineName)) {
             Toast.makeText(MainActivity.this, "请输入要查询的公交路线", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // 校验输入的完整性
-        if (RegularUtil.isNumeric(lineName)) {
-            lineName = lineName + "路";
-        }
+        request = new StringRequest(Request.Method.GET, "http://218.242.144.40/weixinpage/HandlerBus.ashx?action=Two&name=1096%E8%B7%AF&lineid=001096", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Gson gson = new Gson();
+                busBean = gson.fromJson(response, BusBean.class);
 
-        // 统计
-        Map<String,String> m = new HashMap<String,String>();
-        m.put("lineName", lineName);
+                // 切换Activity
+                Intent intent=new Intent();
+                intent.setClass(MainActivity.this, ResultActivity.class);
+                intent.putExtra("linenumber",lineName);
+                startActivity(intent);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
 
-        // 切换Activity
-        Intent intent=new Intent();
-        intent.setClass(MainActivity.this, ResultActivity.class);
-        intent.putExtra("lineName", lineName);
-        startActivity(intent);
+        requestQueue.add(request);
+
+
     }
 }
