@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,7 +26,7 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
-    private TextView mTextView;
+    private Button mBusSearch;
     private ImageView mImageView;
 
     @Override
@@ -44,7 +45,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mTextView = (TextView) findViewById(R.id.textView);
+        mBusSearch= (Button) findViewById(R.id.buttonSearch);
+        mBusSearch.setOnClickListener(this);
+
         mImageView = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.ivAvatar);
         mImageView.setOnClickListener(this);
 
@@ -106,8 +109,7 @@ public class MainActivity extends AppCompatActivity
                 string = "通知";
                 break;
         }
-        if (!TextUtils.isEmpty(string))
-            mTextView.setText("你点击了"+string);
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -119,6 +121,9 @@ public class MainActivity extends AppCompatActivity
         if(v.getId()==R.id.ivAvatar){
             Intent intent = new Intent(this,LoginActivity.class);
             startActivity(intent);
+        }
+        if(v.getId()==R.id.buttonSearch){
+
         }
     }
 
