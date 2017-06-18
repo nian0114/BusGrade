@@ -9,6 +9,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,6 +28,7 @@ public class ResultActivity extends AppCompatActivity {
     @Bind(R.id.main_recyclerview)
     RecyclerView recyclerView;
 
+    public static boolean direction=true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,7 +71,7 @@ public class ResultActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return MainActivity.busBean.getlineResults0().getStops().size();
+            return direction?MainActivity.busBean.getlineResults1().getStops().size():MainActivity.busBean.getlineResults0().getStops().size();
         }
 
         /**
@@ -87,7 +89,10 @@ public class ResultActivity extends AppCompatActivity {
          */
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int i) {
-            holder.textView.setText(MainActivity.busBean.getlineResults0().getStops().get(i).getZdmc());
+            if (direction)
+            holder.textView.setText(MainActivity.busBean.getlineResults1().getStops().get(i).getZdmc());
+            else
+                holder.textView.setText(MainActivity.busBean.getlineResults0().getStops().get(i).getZdmc());
         }
     }
 
@@ -100,7 +105,7 @@ public class ResultActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.result, menu);
         return true;
     }
 
@@ -110,6 +115,9 @@ public class ResultActivity extends AppCompatActivity {
         if(item.getItemId()==android.R.id.home){
             finish();
             return true;
+        }
+        if (item.getItemId()==R.id.action_changese){
+            direction= !direction;
         }
         return true;
     }
