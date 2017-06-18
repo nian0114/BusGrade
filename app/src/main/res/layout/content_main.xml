@@ -35,7 +35,7 @@
             android:layout_marginTop="30dp">
 
             <EditText
-                android:id="@+id/editTextName"
+                android:id="@+id/busLineName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/default_line"

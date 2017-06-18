@@ -17,8 +17,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.lyk.busgrade.tools.NetUtil;
+import com.lyk.busgrade.tools.RegularUtil;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -26,6 +34,7 @@ import butterknife.OnClick;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
+    private EditText mBusInfo;
     private Button mBusSearch;
     private ImageView mImageView;
 
@@ -44,6 +53,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        mBusInfo=(EditText)findViewById(R.id.busLineName);
 
         mBusSearch= (Button) findViewById(R.id.buttonSearch);
         mBusSearch.setOnClickListener(this);
@@ -123,11 +134,43 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         }
         if(v.getId()==R.id.buttonSearch){
-
+            searchLineClick();
         }
     }
 
     void goToSnackbar(){
         startActivity(new Intent(this,SnackBarActivity.class));
+    }
+
+    /**
+     * 实时公交—线路查询按钮点击事件响应
+     */
+    void searchLineClick() {
+        // 检查网络
+        if (!NetUtil.checkNet(MainActivity.this)) {
+            Toast.makeText(MainActivity.this, R.string.network_tip, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        String lineName = mBusInfo.getText().toString();
+        if (TextUtils.isEmpty(lineName)) {
+            Toast.makeText(MainActivity.this, "请输入要查询的公交路线", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 校验输入的完整性
+        if (RegularUtil.isNumeric(lineName)) {
+            lineName = lineName + "路";
+        }
+
+        // 统计
+        Map<String,String> m = new HashMap<String,String>();
+        m.put("lineName", lineName);
+
+        // 切换Activity
+        Intent intent=new Intent();
+        intent.setClass(MainActivity.this, ResultActivity.class);
+        intent.putExtra("lineName", lineName);
+        startActivity(intent);
     }
 }
