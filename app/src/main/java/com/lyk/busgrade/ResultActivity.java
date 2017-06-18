@@ -107,7 +107,10 @@ public class ResultActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        if(item.getItemId()==android.R.id.home){
+            finish();
+            return true;
+        }
         return true;
     }
 
