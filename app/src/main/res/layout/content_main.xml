@@ -38,7 +38,7 @@
                 android:id="@+id/editTextName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/hint_name"
+                android:hint="@string/default_line"
                 android:textColorHint="@color/colorGray"
                 />
         </android.support.design.widget.TextInputLayout>
