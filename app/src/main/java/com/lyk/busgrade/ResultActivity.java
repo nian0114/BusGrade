@@ -128,7 +128,7 @@ public class ResultActivity extends AppCompatActivity {
                     }
 
                     Intent intent = getIntent();
-                    request = new StringRequest(Request.Method.GET, "http://218.242.144.40/weixinpage/HandlerBus.ashx?action=Three&name=" + intent.getStringExtra("linenumber") + "%E8%B7%AF&lineid=" + line_id + "&stopid=" + MainActivity.busBean.getlineResults0().getStops().get(i).getDesc() + "&direction=" + (direction ? "1" : "0"), new Response.Listener<String>() {
+                    request = new StringRequest(Request.Method.GET, "http://218.242.144.40/weixinpage/HandlerBus.ashx?action=Three&name=" + intent.getStringExtra("linenumber") + "%E8%B7%AF&lineid=" + line_id + "&stopid=" + (direction?MainActivity.busBean.getlineResults1().getStops().get(i-1).getDesc():MainActivity.busBean.getlineResults0().getStops().get(i-1).getDesc()) + "&direction=" + (direction ? "1" : "0"), new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             Gson gson = new Gson();
