@@ -142,10 +142,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.ivAvatar) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-        }
         if (v.getId() == R.id.buttonSearch) {
             searchLineClick();
         }
