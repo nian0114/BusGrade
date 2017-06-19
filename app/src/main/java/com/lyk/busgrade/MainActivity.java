@@ -153,9 +153,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    void goToSnackbar(){
-        startActivity(new Intent(this,SnackBarActivity.class));
-    }
 
     /**
      * 实时公交—线路查询按钮点击事件响应

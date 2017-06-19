@@ -3,6 +3,8 @@ package com.lyk.busgrade;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -15,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,6 +29,9 @@ import butterknife.ButterKnife;
 public class ResultActivity extends AppCompatActivity {
     @Bind(R.id.main_recyclerview)
     RecyclerView recyclerView;
+
+    @Bind(R.id.resultLayout)
+    CoordinatorLayout coordinatorLayout;
 
     public static boolean direction = true;
 
@@ -93,6 +99,14 @@ public class ResultActivity extends AppCompatActivity {
                 holder.textView.setText(MainActivity.busBean.getlineResults1().getStops().get(i).getZdmc());
             else
                 holder.textView.setText(MainActivity.busBean.getlineResults0().getStops().get(i).getZdmc());
+
+            holder.textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View arg0) {
+                    // 点击事件
+                    showSnackbar(Snackbar.LENGTH_SHORT, R.string.snackbar_short).show();
+                }
+            });
         }
     }
 
@@ -122,5 +136,7 @@ public class ResultActivity extends AppCompatActivity {
         return true;
     }
 
-
+    private Snackbar showSnackbar(int time,int strId){
+        return Snackbar.make(coordinatorLayout,getString(strId),time);
+    }
 }
