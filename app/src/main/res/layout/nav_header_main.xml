@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:src="@mipmap/ic_account_circle_white_48dp" />
+        android:src="@mipmap/ic_bus" />
 
     <TextView
         android:id="@+id/tvNickName"
@@ -26,13 +26,8 @@
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
         tools:text="JohnTsai"
-        android:text="@string/click_login"
+        android:text="上海公交"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
-    <TextView
-        android:id="@+id/tvRealName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        tools:text="JohnTsaiAndroid" />
 
 </LinearLayout>
