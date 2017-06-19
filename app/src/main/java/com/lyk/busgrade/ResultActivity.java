@@ -11,7 +11,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -129,19 +128,18 @@ public class ResultActivity extends AppCompatActivity {
                     }
 
                     Intent intent = getIntent();
-                    request = new StringRequest(Request.Method.GET, "http://218.242.144.40/weixinpage/HandlerBus.ashx?action=Three&name="+intent.getStringExtra("linenumber")+"%E8%B7%AF&lineid="+line_id+"&stopid="+MainActivity.busBean.getlineResults0().getStops().get(i).getDesc()+"&direction="+(direction?"1":"0"), new Response.Listener<String>() {
+                    request = new StringRequest(Request.Method.GET, "http://218.242.144.40/weixinpage/HandlerBus.ashx?action=Three&name=" + intent.getStringExtra("linenumber") + "%E8%B7%AF&lineid=" + line_id + "&stopid=" + MainActivity.busBean.getlineResults0().getStops().get(i).getDesc() + "&direction=" + (direction ? "1" : "0"), new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             Gson gson = new Gson();
                             BusNowBean busNowBean = gson.fromJson(response, BusNowBean.class);
 
-                            showSnackbar(Snackbar.LENGTH_SHORT, busNowBean.getCars().get(0).getTerminal()).show();
-
+                            showSnackbar(Snackbar.LENGTH_SHORT, busNowBean.getCars().get(0).getTerminal() + "还有" + busNowBean.getCars().get(0).getStopdis() + "站，约" + busNowBean.getCars().get(0).getDistance() + "米").show();
                         }
                     }, new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            error.printStackTrace();
+                            showSnackbar(Snackbar.LENGTH_SHORT, "暂无车辆信息，请耐心等待").show();
                         }
                     });
 
