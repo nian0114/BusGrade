@@ -126,12 +126,9 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.nav_friend:
-                intent.setClass(MainActivity.this, SchemeActivity.class);
-                intent.putExtra("qidian", "上海建桥学院");
-                intent.putExtra("zongdian", "上海南站");
+                intent.setClass(MainActivity.this, SearchActivity.class);
                 startActivity(intent);
                 break;
-
             case R.id.nav_notification:
                 string = "通知";
                 break;
