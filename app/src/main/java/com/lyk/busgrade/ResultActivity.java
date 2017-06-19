@@ -11,13 +11,24 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,6 +45,8 @@ public class ResultActivity extends AppCompatActivity {
     CoordinatorLayout coordinatorLayout;
 
     public static boolean direction = true;
+    private RequestQueue requestQueue;
+    private StringRequest request;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +68,8 @@ public class ResultActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);//提高性能
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(new Adapter(this));
+
+        requestQueue = Volley.newRequestQueue(this);
     }
 
 
@@ -103,8 +118,36 @@ public class ResultActivity extends AppCompatActivity {
             holder.textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View arg0) {
+                    String line_id = "";
+                    JSONObject jsonObject = null;
+
+                    try {
+                        jsonObject = new JSONObject(MainActivity.s);
+                        line_id = jsonObject.getString("line_id");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    Log.d("TAG", line_id);
+                    request = new StringRequest(Request.Method.GET, "http://218.242.144.40/weixinpage/HandlerBus.ashx?action=Three&name=1096%E8%B7%AF&lineid=80301&stopid=801832971&direction=0", new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Gson gson = new Gson();
+                            BusNowBean busNowBean = gson.fromJson(response, BusNowBean.class);
+
+                            showSnackbar(Snackbar.LENGTH_SHORT, busNowBean.getCars().get(0).getTerminal()).show();
+
+                        }
+                    }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                    });
+
+                    requestQueue.add(request);
+
                     // 点击事件
-                    showSnackbar(Snackbar.LENGTH_SHORT, R.string.snackbar_short).show();
                 }
             });
         }
@@ -136,7 +179,11 @@ public class ResultActivity extends AppCompatActivity {
         return true;
     }
 
-    private Snackbar showSnackbar(int time,int strId){
-        return Snackbar.make(coordinatorLayout,getString(strId),time);
+    private Snackbar showSnackbar(int time, int strId) {
+        return Snackbar.make(coordinatorLayout, getString(strId), time);
+    }
+
+    private Snackbar showSnackbar(int time, String str) {
+        return Snackbar.make(coordinatorLayout, str, time);
     }
 }

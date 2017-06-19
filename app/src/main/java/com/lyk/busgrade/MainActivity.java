@@ -2,24 +2,19 @@ package com.lyk.busgrade;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.graphics.ColorUtils;
-import android.support.v7.app.ActionBar;
-import android.text.TextUtils;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -30,14 +25,14 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.lyk.busgrade.tools.NetUtil;
-import com.lyk.busgrade.tools.RegularUtil;
 
-import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
 
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -50,6 +45,7 @@ public class MainActivity extends AppCompatActivity
     private StringRequest request;
 
     public static BusBean busBean;
+    public static String s;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,9 +63,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mBusInfo=(EditText)findViewById(R.id.busLineName);
+        mBusInfo = (EditText) findViewById(R.id.busLineName);
 
-        mBusSearch= (Button) findViewById(R.id.buttonSearch);
+        mBusSearch = (Button) findViewById(R.id.buttonSearch);
         mBusSearch.setOnClickListener(this);
 
         mImageView = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.ivAvatar);
@@ -117,7 +113,7 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
         String string = null;
-        switch (id){
+        switch (id) {
             case R.id.nav_me:
                 string = "我";
                 break;
@@ -144,11 +140,11 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
-        if(v.getId()==R.id.ivAvatar){
-            Intent intent = new Intent(this,LoginActivity.class);
+        if (v.getId() == R.id.ivAvatar) {
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }
-        if(v.getId()==R.id.buttonSearch){
+        if (v.getId() == R.id.buttonSearch) {
             searchLineClick();
         }
     }
@@ -170,16 +166,33 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        request = new StringRequest(Request.Method.GET, "http://218.242.144.40/weixinpage/HandlerBus.ashx?action=Two&name="+lineName+"%E8%B7%AF&lineid="+String.format("%06d",Integer.parseInt(lineName)), new Response.Listener<String>() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpGet get = new HttpGet("http://218.242.144.40/weixinpage/HandlerBus.ashx?action=One&name=" + lineName + "%E8%B7%AF");
+                HttpClient httpClient = new DefaultHttpClient();
+                try {
+                    HttpResponse httpResponse = httpClient.execute(get);
+
+                    s = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }).start();
+
+        request = new StringRequest(Request.Method.GET, "http://218.242.144.40/weixinpage/HandlerBus.ashx?action=Two&name=" + lineName + "%E8%B7%AF&lineid=" + String.format("%06d", Integer.parseInt(lineName)), new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 Gson gson = new Gson();
                 busBean = gson.fromJson(response, BusBean.class);
 
                 // 切换Activity
-                Intent intent=new Intent();
+                Intent intent = new Intent();
                 intent.setClass(MainActivity.this, ResultActivity.class);
-                intent.putExtra("linenumber",lineName);
+                intent.putExtra("linenumber", lineName);
                 startActivity(intent);
             }
         }, new Response.ErrorListener() {
