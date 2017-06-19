@@ -4,8 +4,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -19,7 +23,7 @@ import java.util.Map;
  * Created by Nian on 17/6/19.
  */
 
-public class SchemeActivity extends BaseActivity implements AdapterView.OnItemClickListener {
+public class SchemeActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private RelativeLayout wuschemeLayout = null;
     private ListView listSchemeView = null;
@@ -39,8 +43,19 @@ public class SchemeActivity extends BaseActivity implements AdapterView.OnItemCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scheme);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("路线规划");
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setDisplayShowHomeEnabled(true);
+
         // 初始化界面或元素
-        init();
+        handler = new ResultHandler(this);
+
+        wuschemeLayout = (RelativeLayout) findViewById(R.id.wuscheme);
+        listSchemeView = (ListView) findViewById(R.id.list_scheme);
 
         Intent intent = getIntent();
 
@@ -60,7 +75,7 @@ public class SchemeActivity extends BaseActivity implements AdapterView.OnItemCl
 
         @Override
         public void handleMessage(Message msg) {
-            final SchemeActivity  theActivity =  mActivity.get();
+            final SchemeActivity theActivity = mActivity.get();
 
             int messageFlag = msg.what;
             if (messageFlag == 1) {
@@ -87,7 +102,7 @@ public class SchemeActivity extends BaseActivity implements AdapterView.OnItemCl
                 String responseString = BaiduApiService.getDirectionRoutesResponse(qidian, zhongdian);
                 if (TextUtils.isEmpty(responseString)) {
                     // 发出message = 1
-                    Message msg=new Message();
+                    Message msg = new Message();
                     msg.what = 1;
                     handler.sendMessage(msg);
                     return;
@@ -98,7 +113,7 @@ public class SchemeActivity extends BaseActivity implements AdapterView.OnItemCl
                     Map<String, List<String>> resultMap = BaiduApiService.parseAccuratePosition(responseString);
                     if (resultMap == null || resultMap.size() == 0) {
                         // 发出message = 1
-                        Message msg=new Message();
+                        Message msg = new Message();
                         msg.what = 1;
                         handler.sendMessage(msg);
                         return;
@@ -127,30 +142,24 @@ public class SchemeActivity extends BaseActivity implements AdapterView.OnItemCl
                 }
                 routesList = BaiduApiService.parseDirectionRoutes(responseString);
                 if (routesList == null || routesList.isEmpty()) {
-                    Message msg=new Message();
+                    Message msg = new Message();
                     msg.what = 1;
                     handler.sendMessage(msg);
                     return;
                 }
                 // 发出message = 2，成功处理
-                Message msg=new Message();
+                Message msg = new Message();
                 msg.what = 2;
                 handler.sendMessage(msg);
             } catch (Exception e) {
                 Log.e("paseScheme", e.getMessage());
-                Message msg=new Message();
+                Message msg = new Message();
                 msg.what = 1;
                 handler.sendMessage(msg);
             }
         }
     }
 
-    private void init() {
-        handler = new ResultHandler(this);
-
-        wuschemeLayout = (RelativeLayout) findViewById(R.id.wuscheme);
-        listSchemeView = (ListView) findViewById(R.id.list_scheme);
-    }
 
     private void showSchemes(List<RoutesScheme> routesSchemeList, String qidian, String zongdian) {
         isCurrentItems = new boolean[routesSchemeList.size()];
@@ -190,13 +199,13 @@ public class SchemeActivity extends BaseActivity implements AdapterView.OnItemCl
         adapter.notifyDataSetChanged();
     }
 
-    /**
-     * 关闭当前页面
-     *
-     * @param v
-     */
-    public void backPrePageClick(View v) {
-        SchemeActivity.this.finish();
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 
