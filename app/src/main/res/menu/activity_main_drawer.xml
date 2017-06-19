@@ -11,7 +11,7 @@
             android:icon="@mipmap/ic_friends_gray_24"
             android:title="线路查询" />
         <item
-            android:id="@+id/nav_message"
+            android:id="@+id/nav_yue"
             android:icon="@mipmap/ic_messages_gray_24"
             android:title="余额查询" />
     </group>

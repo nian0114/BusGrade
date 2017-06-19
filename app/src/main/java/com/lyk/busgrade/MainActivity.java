@@ -120,10 +120,12 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_about:
                 string = "关于";
                 break;
-            case R.id.nav_friend:
-                string = "好友";
+            case R.id.nav_yue:
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, YueActivity.class);
+                startActivity(intent);
                 break;
-            case R.id.nav_message:
+            case R.id.nav_friend:
                 string = "私信";
                 break;
 
