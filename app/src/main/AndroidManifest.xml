@@ -36,6 +36,10 @@
         <activity
             android:name=".YueActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".SchemeActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

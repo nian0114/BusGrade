@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+        Intent intent = new Intent();
         String string = null;
         switch (id) {
             case R.id.nav_me:
@@ -121,12 +122,14 @@ public class MainActivity extends AppCompatActivity
                 string = "关于";
                 break;
             case R.id.nav_yue:
-                Intent intent = new Intent();
                 intent.setClass(MainActivity.this, YueActivity.class);
                 startActivity(intent);
                 break;
             case R.id.nav_friend:
-                string = "私信";
+                intent.setClass(MainActivity.this, SchemeActivity.class);
+                intent.putExtra("qidian", "上海建桥学院");
+                intent.putExtra("zongdian", "上海南站");
+                startActivity(intent);
                 break;
 
             case R.id.nav_notification:
