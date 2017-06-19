@@ -128,8 +128,8 @@ public class ResultActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
-                    Log.d("TAG", line_id);
-                    request = new StringRequest(Request.Method.GET, "http://218.242.144.40/weixinpage/HandlerBus.ashx?action=Three&name=1096%E8%B7%AF&lineid=80301&stopid=801832971&direction=0", new Response.Listener<String>() {
+                    Intent intent = getIntent();
+                    request = new StringRequest(Request.Method.GET, "http://218.242.144.40/weixinpage/HandlerBus.ashx?action=Three&name="+intent.getStringExtra("linenumber")+"%E8%B7%AF&lineid="+line_id+"&stopid="+MainActivity.busBean.getlineResults0().getStops().get(i).getDesc()+"&direction="+(direction?"1":"0"), new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             Gson gson = new Gson();
