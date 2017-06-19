@@ -17,7 +17,7 @@ import java.util.Map;
 public class BaiduApiService {
     private static final String region = "上海";
     private static final String ak = "vWLtxQbUfWpEFxRNXyiGg3jd";
-    
+
     public static String getDirectionRoutesResponse(String origin, String destination) {
         try {
             StringBuilder url = new StringBuilder("http://api.map.baidu.com/direction/v1?mode=transit")
@@ -27,16 +27,14 @@ public class BaiduApiService {
                     .append("&origin_region=").append(URLEncoder.encode(region, "UTF-8"))
                     .append("&destination_region=").append(URLEncoder.encode(region, "UTF-8"))
                     .append("&output=json&ak=").append(ak);
-            
             String content = HttpClientUtils.getResponse(url.toString());
-            Log.d("TAG",url.toString());
             return content;
         } catch (Exception e) {
-            Log.e("com.yhtye.shgongjiao.service.BaiduApiService", "getDirectionRoutes()", e);
+            e.printStackTrace();
         }
         return null;
     }
-    
+
     public static List<RoutesScheme> parseDirectionRoutes(String responseString) {
         if (TextUtils.isEmpty(responseString)) {
             return null;
@@ -51,9 +49,9 @@ public class BaiduApiService {
             if (jsonNodes == null || jsonNodes.get("routes") == null) {
                 return null;
             }
-            
+
             List<RoutesScheme> list = new ArrayList<RoutesScheme>();
-            
+
             jsonNodes = mapper.readValue(jsonNodes.get("routes"), JsonNode.class);
             for (JsonNode node : jsonNodes) {
                 JsonNode schemeNode = mapper.readValue(node.get("scheme"), JsonNode.class);
@@ -65,7 +63,7 @@ public class BaiduApiService {
                 RoutesScheme routesScheme = new RoutesScheme();
                 routesScheme.setDistance(schemeNode.get("distance").getIntValue());
                 routesScheme.setDuration(schemeNode.get("duration").getIntValue());
-                
+
                 JsonNode stepsNode = mapper.readValue(schemeNode.get("steps"), JsonNode.class);
                 if (stepsNode == null) {
                     continue;
@@ -97,7 +95,7 @@ public class BaiduApiService {
                                 steps.setVehicleStartName(vehicleNode.get("start_name").getTextValue());
                                 steps.setVehicleStopNum(vehicleNode.get("stop_num").getIntValue());
                                 steps.setVehicleType(vehicleNode.get("type").getIntValue());
-                                
+
                                 vehicleNames.add(steps.getVehicleName());
                                 stepsList.add(steps);
                             }
@@ -110,12 +108,12 @@ public class BaiduApiService {
             }
             return list;
         } catch (Exception e) {
-            Log.e("com.yhtye.shgongjiao.service.BaiduApiService", "parseDirectionRoutes()", e);
+            e.printStackTrace();
         }
-        
+
         return null;
     }
-    
+
     public static Map<String, List<String>> parseAccuratePosition(String responseString) {
         if (TextUtils.isEmpty(responseString)) {
             return null;
@@ -130,9 +128,9 @@ public class BaiduApiService {
             if (jsonNodes == null) {
                 return null;
             }
-            
+
             Map<String, List<String>> resultMap = new HashMap<String, List<String>>();
-            for (String key : new String[] {"origin", "destination"}) {
+            for (String key : new String[]{"origin", "destination"}) {
                 if (jsonNodes.get(key) != null) {
                     // 解析起终点
                     List<String> list = new ArrayList<String>();
@@ -147,70 +145,32 @@ public class BaiduApiService {
             }
             return resultMap;
         } catch (Exception e) {
-            Log.e("com.yhtye.shgongjiao.service.BaiduApiService", "parseAccuratePosition()", e);
+            e.printStackTrace();
         }
-        
+
         return null;
     }
-    
-    public static PositionInfo parseMyPosition(String responseString) {
-        if (TextUtils.isEmpty(responseString)) {
-            return null;
-        }
-        
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            JsonNode jsonNode = mapper.readValue(responseString, JsonNode.class);
-            if (jsonNode != null 
-                    && jsonNode.get("errNum").getIntValue() == 0 
-                    && jsonNode.get("retData") != null) {
-                JsonNode nodes =  mapper.readValue(jsonNode.get("retData"), JsonNode.class);
-                for (JsonNode node : nodes) {
-                    return new PositionInfo(node.get("x").getDoubleValue(), node.get("y").getDoubleValue());
-                }
-            }
-        } catch (Exception e) {
-            Log.e("com.yhtye.shgongjiao.service.BaiduApiService", "parseMyPosition()", e);
-        }
-        return null;
-    }
-    
-    public static List<String> getNearStations(PositionInfo myPosition) {
-        try {
-            StringBuilder url = new StringBuilder("http://api.map.baidu.com/place/v2/search?ak=")
-                    .append(ak)
-                    .append("&output=json&query=").append(URLEncoder.encode("公交", "UTF-8"))
-                    .append("&page_size=10&radius=500&page_num=0&scope=1&location=")
-                    .append(URLEncoder.encode(String.format("%s,%s", myPosition.getX(), myPosition.getY()), "UTF-8"));
-            
-            String content = HttpClientUtils.getResponse(url.toString());
-            return parseNearStations(content);
-        } catch (Exception e) {
-            Log.e("com.yhtye.shgongjiao.service.BaiduApiService", "getNearStations()", e);
-        }
-        return null;
-    }
-    
+
     private static List<String> parseNearStations(String responseString) {
         if (TextUtils.isEmpty(responseString)) {
             return null;
         }
-        
+
         ObjectMapper mapper = new ObjectMapper();
         try {
             JsonNode jsonNode = mapper.readValue(responseString, JsonNode.class);
-            if (jsonNode != null 
-                    && jsonNode.get("status").getIntValue() == 0 
+            if (jsonNode != null
+                    && jsonNode.get("status").getIntValue() == 0
                     && jsonNode.get("results") != null) {
                 List<String> list = new ArrayList<String>();
-                JsonNode nodes =  mapper.readValue(jsonNode.get("results"), JsonNode.class);
+                JsonNode nodes = mapper.readValue(jsonNode.get("results"), JsonNode.class);
                 for (JsonNode node : nodes) {
                     list.add(node.get("name").getTextValue());
                 }
                 return list;
             }
         } catch (Exception e) {
-            Log.e("com.yhtye.shgongjiao.service.BaiduApiService", "parseNearStations()", e);
+            e.printStackTrace();
         }
         return null;
     }
