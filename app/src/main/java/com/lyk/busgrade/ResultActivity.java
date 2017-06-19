@@ -9,7 +9,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,13 +27,14 @@ public class ResultActivity extends AppCompatActivity {
     @Bind(R.id.main_recyclerview)
     RecyclerView recyclerView;
 
-    public static boolean direction=true;
+    public static boolean direction = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
-        Intent intent=getIntent();
+        Intent intent = getIntent();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -71,7 +71,7 @@ public class ResultActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return direction?MainActivity.busBean.getlineResults1().getStops().size():MainActivity.busBean.getlineResults0().getStops().size();
+            return direction ? MainActivity.busBean.getlineResults1().getStops().size() : MainActivity.busBean.getlineResults0().getStops().size();
         }
 
         /**
@@ -90,7 +90,7 @@ public class ResultActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(final ViewHolder holder, final int i) {
             if (direction)
-            holder.textView.setText(MainActivity.busBean.getlineResults1().getStops().get(i).getZdmc());
+                holder.textView.setText(MainActivity.busBean.getlineResults1().getStops().get(i).getZdmc());
             else
                 holder.textView.setText(MainActivity.busBean.getlineResults0().getStops().get(i).getZdmc());
         }
@@ -112,12 +112,12 @@ public class ResultActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        if(item.getItemId()==android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             finish();
             return true;
         }
-        if (item.getItemId()==R.id.action_changese){
-            direction= !direction;
+        if (item.getItemId() == R.id.action_changese) {
+            direction = !direction;
         }
         return true;
     }
