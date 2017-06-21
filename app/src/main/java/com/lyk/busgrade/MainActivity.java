@@ -119,7 +119,8 @@ public class MainActivity extends AppCompatActivity
                 string = "我";
                 break;
             case R.id.nav_about:
-                string = "关于";
+                intent.setClass(MainActivity.this, AboutActivity.class);
+                startActivity(intent);
                 break;
             case R.id.nav_yue:
                 intent.setClass(MainActivity.this, YueActivity.class);
