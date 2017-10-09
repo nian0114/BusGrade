@@ -31,7 +31,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(R.string.user_login);
+        actionBar.setTitle(R.string.about);
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowHomeEnabled(true);
 
