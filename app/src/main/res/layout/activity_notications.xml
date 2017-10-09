@@ -39,6 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:text="卢亦恺 版权所有"
-            android:textAlignment="center" />
+            android:textAlignment="center"
+            android:id="@+id/notice_tw"/>
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
