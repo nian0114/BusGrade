@@ -131,7 +131,8 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.nav_notification:
-                string = "通知";
+                intent.setClass(MainActivity.this, Notifications.class);
+                startActivity(intent);
                 break;
         }
 
